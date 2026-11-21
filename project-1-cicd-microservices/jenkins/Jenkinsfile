@@ -128,9 +128,9 @@ pipeline {
                         echo "Deploying to Production..."
                         docker-compose up -d
                         echo "Verifying health checks..."
-                        curl -f http://localhost:3000 || exit 1
-                        curl -f http://localhost:5001/health || exit 1
-                        curl -f http://localhost:5002/health || exit 1
+                        curl -f http://172.31.8.186:3000 || exit 1
+                        curl -f http://172.31.8.186:5001/health || exit 1
+                        curl -f http://172.31.8.186:5002/health || exit 1
                         echo "PRODUCTION DEPLOYMENT HEALTHY!"
                     """
                 }
