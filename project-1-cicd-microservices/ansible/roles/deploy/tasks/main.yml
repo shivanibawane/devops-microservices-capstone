@@ -1,0 +1,35 @@
+---
+- name: Create app deployment directory
+  file:
+    path: "{{ app_root_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Render docker-compose.yml from template
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_root_dir }}/docker-compose.yml"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: Pull updated container images
+  command: docker compose pull
+  args:
+    chdir: "{{ app_root_dir }}"
+
+- name: Deploy application containers (zero downtime recreation)
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: "{{ app_root_dir }}"
+
+- name: Wait for Frontend health endpoint to return 200 OK
+  uri:
+    url: "http://localhost:80/health"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 3

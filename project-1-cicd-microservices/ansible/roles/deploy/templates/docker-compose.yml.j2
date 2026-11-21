@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: "{{ docker_repo }}-frontend:{{ image_tag }}"
+    container_name: capstone-frontend
+    ports:
+      - "80:3000"
+    environment:
+      - PORT=3000
+      - PRODUCTS_SERVICE_URL=http://products-service:5001
+      - CART_SERVICE_URL=http://cart-service:5002
+      - ENVIRONMENT={{ environment_name }}
+    depends_on:
+      - products-service
+      - cart-service
+    restart: always
+
+  products-service:
+    image: "{{ docker_repo }}-products:{{ image_tag }}"
+    container_name: capstone-products
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - ENVIRONMENT={{ environment_name }}
+    restart: always
+
+  cart-service:
+    image: "{{ docker_repo }}-cart:{{ image_tag }}"
+    container_name: capstone-cart
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - ENVIRONMENT={{ environment_name }}
+    restart: always
+
+networks:
+  default:
+    name: capstone-prod-network

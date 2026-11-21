@@ -1,0 +1,12 @@
+---
+- name: Deploy Microservices Application
+  hosts: app_servers
+  become: true
+  vars:
+    app_root_dir: /opt/capstone-store
+    docker_repo: "devopsstudent/capstone-store"
+    image_tag: "latest"
+
+  roles:
+    - docker
+    - deploy
